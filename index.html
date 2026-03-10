@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Research Finance · Automation 2025–26</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root {
@@ -38,7 +38,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', 'Roboto', sans-serif;
   background: var(--bg);
   color: var(--text-pri);
   min-height: 100vh;
@@ -209,7 +209,7 @@ header {
   display: flex; align-items: baseline; gap: 8px;
 }
 .badge {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', 'Roboto', sans-serif;
   font-size: 10.5px; font-weight: 700;
   padding: 2px 7px; border-radius: 20px;
 }
@@ -312,7 +312,7 @@ header {
 .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 .chart-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-mute); margin-bottom: 10px; }
 svg { overflow: visible; display: block; }
-.ax { font-family: 'DM Sans',sans-serif; fill: #5e6471; font-size: 8.5px; }
+.ax { font-family: 'Inter','Roboto',sans-serif; fill: #5e6471; font-size: 8.5px; }
 .c-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .c-area { opacity: .1; }
 
@@ -339,49 +339,6 @@ svg { overflow: visible; display: block; }
 .debt-stat { font-size: 10.5px; color: var(--text-sec); }
 .debt-stat span { font-weight: 600; color: var(--text-pri); }
 
-/* OPEN INVOICES TABLE */
-.table-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 18px 20px;
-  margin-top: 14px;
-  animation: fadeUp .5s .15s ease both;
-}
-.table-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.table-filters { display: flex; gap: 6px; flex-wrap: wrap; }
-.filter-pill {
-  padding: 3px 10px; border-radius: 20px; border: none;
-  font-size: 10px; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all .15s;
-  background: var(--card-deep); color: var(--text-mute);
-}
-.filter-pill.active { background: var(--rose-soft); color: var(--rose); }
-
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
-thead th {
-  text-align: left; padding: 7px 10px;
-  font-size: 9.5px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--text-mute); white-space: nowrap;
-  border-bottom: 1px solid var(--border-med);
-}
-tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
-tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: rgba(255,255,255,0.025); }
-tbody td { padding: 8px 10px; color: var(--text-sec); vertical-align: middle; }
-tbody td.amt { font-weight: 500; color: var(--text-pri); }
-.age-badge {
-  padding: 2px 7px; border-radius: 12px;
-  font-size: 10px; font-weight: 600;
-  white-space: nowrap;
-}
-.age-360  { background: rgba(224,168,168,0.2); color: var(--rose); }
-.age-180  { background: rgba(212,184,150,0.2); color: var(--amber); }
-.age-90   { background: rgba(168,192,218,0.2); color: var(--sky); }
-.age-30   { background: rgba(168,197,160,0.2); color: var(--sage); }
-.age-cur  { background: rgba(196,184,212,0.2); color: var(--lavender); }
 
 @keyframes fadeUp {
   from { opacity:0; transform:translateY(10px); }
@@ -578,40 +535,8 @@ tbody td.amt { font-weight: 500; color: var(--text-pri); }
     </div>
   </div>
 
-  <!-- OPEN INVOICES TABLE -->
-  <div class="table-card">
-    <div class="table-header">
-      <div class="card-title" style="margin-bottom:0">Open Invoices · Debt Register</div>
-      <div class="table-filters" id="age-filters">
-        <button class="filter-pill active" onclick="filterAge('all',this)">All</button>
-        <button class="filter-pill age-360" onclick="filterAge('360+',this)">360+ days</button>
-        <button class="filter-pill age-180" onclick="filterAge('181-360',this)">181–360 days</button>
-        <button class="filter-pill age-90"  onclick="filterAge('91-180',this)">91–180 days</button>
-        <button class="filter-pill age-30"  onclick="filterAge('31-90',this)">31–90 days</button>
-        <button class="filter-pill age-cur" onclick="filterAge('0-30',this)">0–30 days</button>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Sponsor</th>
-            <th>Invoice No</th>
-            <th>Department</th>
-            <th>Project</th>
-            <th>Due Date</th>
-            <th>Days Overdue</th>
-            <th>Ageing</th>
-            <th>Outstanding (£)</th>
-          </tr>
-        </thead>
-        <tbody id="invoice-tbody"></tbody>
-      </table>
-    </div>
-    <div id="table-count" style="font-size:11px;color:var(--text-mute);margin-top:10px;"></div>
-  </div>
 
-</div>
+</div><!-- end dashboard -->
 
 <script>
 // ─────────────────────────────────────────────
@@ -626,8 +551,7 @@ let state = {
   totals: {},
   debtByType: {},
   currentChartTab: 'WORK',
-  currentFunderTab: 'WORK',
-  currentAgeFilter: 'all'
+  currentFunderTab: 'WORK'
 };
 
 // ─────────────────────────────────────────────
@@ -653,7 +577,7 @@ function processFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true, dateNF: 'yyyy-mm-dd' });
       parseWorkbook(wb, file.name);
       ls.style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
@@ -682,59 +606,40 @@ function parseWorkbook(wb, filename) {
   state.deptMap = {};
   drows.slice(1).forEach(r => { if (r[0] && r[1]) state.deptMap[String(r[0]).trim()] = String(r[1]).trim(); });
 
-  // All Invoices – raw rows
+  // All Invoices – raw rows (raw:true keeps numeric serial dates; cellDates handled at wb.read level)
   const aws = wb.Sheets['All Invoices'];
-  const arows = XLSX.utils.sheet_to_json(aws, { header:1, defval:null, raw:false });
-  // Headers on row index 1 (0-based): ID, Month, Dept, Project No, Paying, Non-Paying, Invoice Amount, Invoice No, Type, Outstanding, Paid
+  const arows = XLSX.utils.sheet_to_json(aws, { header:1, defval:null, raw:true });
+
   const invoices = [];
   for (let i = 2; i < arows.length; i++) {
     const r = arows[i];
-    const id = r[0];
-    if (!id || isNaN(Number(id))) continue;
-    const month = r[1];
-    const dept = r[2];
-    const proj = r[3];
-    const paying = r[4];
-    const amt = parseFloat(r[6]) || 0;
-    const type = String(r[8] || '').toUpperCase().trim();
-    const outstanding = parseFloat(r[9]) || 0;
-    const paid = parseFloat(r[10]) || 0;
-    if (!month || !type) continue;
+    if (r[0] == null || r[1] == null) continue;
 
-    // Parse month
+    // Month: SheetJS with cellDates:true gives a JS Date; with raw it may be serial number or Date
     let dt;
-    if (month instanceof Date) {
-      dt = month;
+    const rawMonth = r[1];
+    if (rawMonth instanceof Date) {
+      dt = rawMonth;
+    } else if (typeof rawMonth === 'number') {
+      // Excel serial date → JS Date
+      dt = new Date(Math.round((rawMonth - 25569) * 86400 * 1000));
     } else {
-      dt = new Date(month);
+      dt = new Date(rawMonth);
     }
-    if (isNaN(dt)) continue;
+    if (!dt || isNaN(dt.getTime())) continue;
 
-    invoices.push({ dt, dept, proj, paying, amt, type, outstanding, paid });
+    const type = String(r[8] || '').toUpperCase().trim();
+    if (!['WORK','PROFILED','MILESTONE'].includes(type)) continue;
+
+    const amt         = parseFloat(r[6]) || 0;
+    const outstanding = parseFloat(r[9]) || 0;
+    const paid        = parseFloat(r[10]) || 0;
+    const dept        = String(r[2] || '').trim();
+    const paying      = String(r[4] || '').trim();
+
+    invoices.push({ dt, dept, paying, amt, type, outstanding, paid });
   }
   state.invoices = invoices;
-
-  // Open Invoices
-  const ows = wb.Sheets['OpenInvoices'];
-  if (ows) {
-    const orows = XLSX.utils.sheet_to_json(ows, { header:1, defval:null, raw:false });
-    const openInvoices = [];
-    for (let i = 1; i < orows.length; i++) {
-      const r = orows[i];
-      if (!r[0]) continue;
-      openInvoices.push({
-        sponsor:     r[0]  || '',
-        invoiceNo:   r[2]  || '',
-        dueDate:     r[4]  || '',
-        daysOverdue: parseInt(r[6]) || 0,
-        ageing:      r[7]  || '',
-        outstanding: parseFloat(r[13]) || 0,
-        dept:        r[19] || '',
-        project:     r[16] || ''
-      });
-    }
-    state.openInvoices = openInvoices;
-  }
 
   computeAggregates();
   renderAll(filename);
@@ -863,7 +768,6 @@ function renderAll(filename) {
   setFunderTab('WORK', document.querySelector('.pill-sage'));
   renderDepts();
   setChartTab('WORK');
-  renderOpenInvoices('all');
 }
 
 // FUNDER LIST
@@ -1009,63 +913,7 @@ function renderBarChart(type, col) {
   document.getElementById('bar-chart').innerHTML = yLabels + bars + xLabels;
 }
 
-// OPEN INVOICES TABLE
-function filterAge(bucket, btn) {
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  state.currentAgeFilter = bucket;
-  renderOpenInvoices(bucket);
-}
 
-function ageBucketClass(ageing) {
-  const a = (ageing||'').toLowerCase();
-  if (a.includes('360')) return 'age-360';
-  if (a.includes('181') || a.includes('180')) return 'age-180';
-  if (a.includes('91')  || a.includes('90'))  return 'age-90';
-  if (a.includes('31'))  return 'age-30';
-  return 'age-cur';
-}
-
-function ageBucketMatch(ageing, filter) {
-  if (filter === 'all') return true;
-  const a = (ageing||'').toLowerCase();
-  if (filter === '360+')    return a.includes('360');
-  if (filter === '181-360') return a.includes('181') || a.includes('180');
-  if (filter === '91-180')  return a.includes('91')  || a.includes('90');
-  if (filter === '31-90')   return a.includes('31');
-  if (filter === '0-30')    return a.includes('current') || a.includes('0-') || a.includes('30');
-  return true;
-}
-
-function renderOpenInvoices(filter) {
-  const rows = state.openInvoices
-    .filter(r => r.outstanding > 0 && ageBucketMatch(r.ageing, filter))
-    .sort((a,b) => b.daysOverdue - a.daysOverdue)
-    .slice(0, 100);
-
-  const html = rows.map(r => {
-    const cls = ageBucketClass(r.ageing);
-    const due = r.dueDate ? new Date(r.dueDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
-    const dept = r.dept.length > 28 ? r.dept.slice(0,28)+'…' : r.dept;
-    const proj = r.project.length > 30 ? r.project.slice(0,30)+'…' : r.project;
-    return `<tr>
-      <td title="${r.sponsor}">${r.sponsor.length>28?r.sponsor.slice(0,28)+'…':r.sponsor}</td>
-      <td style="color:var(--text-mute)">${r.invoiceNo}</td>
-      <td title="${r.dept}">${dept}</td>
-      <td title="${r.project}">${proj}</td>
-      <td style="color:var(--text-mute)">${due}</td>
-      <td>${r.daysOverdue > 0 ? r.daysOverdue+' days' : '—'}</td>
-      <td><span class="age-badge ${cls}">${r.ageing||'—'}</span></td>
-      <td class="amt">${fmtFull(r.outstanding)}</td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('invoice-tbody').innerHTML = html;
-  const total = state.openInvoices.filter(r => r.outstanding>0 && ageBucketMatch(r.ageing, filter));
-  const sum = total.reduce((s,r) => s+r.outstanding, 0);
-  document.getElementById('table-count').textContent =
-    `Showing ${Math.min(rows.length,100)} of ${total.length} open invoices · Total outstanding: ${fmtFull(sum)}`;
-}
 </script>
 </body>
 </html>
