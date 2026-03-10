@@ -855,7 +855,8 @@ function renderLineChart(type, col) {
   const areaD = `${lineD} L${pts[n-1].x},${pT+ph} L${pts[0].x},${pT+ph} Z`;
 
   const step = Math.ceil(maxV/4) || 1;
-  let yLines='', xLabels='', dots='', labels='';
+  let yLines='', xLabels='', dots='', labels='', peakEl='';
+  const peakIdx = vals.indexOf(Math.max(...vals));
 
   for (let s=0; s<=4; s++) {
     const v=s*step, y=pT+ph-(v/maxV)*ph;
@@ -865,17 +866,24 @@ function renderLineChart(type, col) {
   MONTH_NAMES.forEach((m,i) => {
     const x = pL + (i/(n-1))*pw;
     xLabels += `<text class="ax" x="${x}" y="${H-6}" text-anchor="middle">${m}</text>`;
-    if (vals[i]>0) {
-      dots   += `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="3" fill="${col}"/>`;
-      labels += `<text class="ax" x="${pts[i].x}" y="${pts[i].y-7}" text-anchor="middle" fill="${col}" style="font-size:8.5px;font-weight:600">${vals[i]}</text>`;
+    if (vals[i] > 0) {
+      if (i === peakIdx) {
+        peakEl = `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="9" fill="none" stroke="${col}" stroke-width="1.5" opacity="0.35"/>` +
+                 `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="5" fill="${col}"/>` +
+                 `<text x="${pts[i].x}" y="${pts[i].y - 14}" text-anchor="middle" fill="${col}" ` +
+                 `style="font-family:'Inter','Roboto',sans-serif;font-size:10px;font-weight:700">${vals[i]}</text>`;
+      } else {
+        dots   += `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="3" fill="${col}"/>`;
+        labels += `<text class="ax" x="${pts[i].x}" y="${pts[i].y-7}" text-anchor="middle" fill="${col}" style="font-size:8.5px;font-weight:600">${vals[i]}</text>`;
+      }
     }
   });
 
   document.getElementById('line-chart').innerHTML =
-    `<path class="c-area" d="${areaD}" fill="${col}"/>
-     ${yLines}
-     <path class="c-line" d="${lineD}" stroke="${col}"/>
-     ${dots}${labels}${xLabels}`;
+    `<path class="c-area" d="${areaD}" fill="${col}"/>` +
+    `${yLines}` +
+    `<path class="c-line" d="${lineD}" stroke="${col}"/>` +
+    `${dots}${labels}${peakEl}${xLabels}`;
 }
 
 function renderBarChart(type, col) {
