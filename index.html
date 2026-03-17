@@ -5,468 +5,923 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Research Finance · Automation 2025–26</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root {
-  /* High Fidelity Colors from Reference Image */
-  --bg:          #0b0e11;
-  --surface:     #12161b;
-  --card:        #1b2026;
-  --border:      rgba(255,255,255,0.06);
-  --text-pri:    #f1f5f9;
-  --text-sec:    #94a3b8;
-  --text-mute:   #475569;
-  
-  --c-work:      #a8c5a0;
-  --c-work-soft: rgba(168, 197, 160, 0.1);
-  --c-profiled:  #7ea8b0;
-  --c-prof-soft: rgba(126, 168, 176, 0.1);
-  --c-milestone: #c5a0a0;
-  --c-mile-soft: rgba(197, 160, 160, 0.1);
-
-  --r: 12px;
+  --bg:          #2a2d35;
+  --surface:     #30343d;
+  --card:        #383c47;
+  --card-deep:   #2e3139;
+  --border:      rgba(255,255,255,0.07);
+  --border-med:  rgba(255,255,255,0.11);
+  --text-pri:    #f0ede8;
+  --text-sec:    #9da3ae;
+  --text-mute:   #5e6471;
+  --sage:        #a8c5a0;
+  --sage-soft:   rgba(168,197,160,0.13);
+  --sage-mid:    rgba(168,197,160,0.25);
+  --rose:        #e0a8a8;
+  --rose-soft:   rgba(224,168,168,0.13);
+  --rose-mid:    rgba(224,168,168,0.25);
+  --sky:         #a8c0da;
+  --sky-soft:    rgba(168,192,218,0.13);
+  --sky-mid:     rgba(168,192,218,0.25);
+  --amber:       #d4b896;
+  --amber-soft:  rgba(212,184,150,0.13);
+  --amber-mid:   rgba(212,184,150,0.25);
+  --lavender:    #c4b8d4;
+  --lav-soft:    rgba(196,184,212,0.13);
+  --r: 13px;
+  --r-sm: 8px;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Roboto', sans-serif;
   background: var(--bg);
   color: var(--text-pri);
   min-height: 100vh;
-  padding: 24px 32px 100px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 /* ─── UPLOAD SCREEN ─── */
 #upload-screen {
-  position: fixed; inset: 0; background: var(--bg);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 40px 20px;
+}
+.upload-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--text-pri);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+.upload-sub {
+  font-size: 13px;
+  color: var(--text-mute);
+  margin-bottom: 44px;
+  letter-spacing: 0.05em;
 }
 .drop-zone {
-  width: 500px; border: 1.5px dashed var(--border); border-radius: var(--r);
-  background: var(--surface); padding: 60px; text-align: center; cursor: pointer;
-  transition: all 0.3s ease;
+  width: 460px;
+  max-width: 100%;
+  border: 1.5px dashed var(--border-med);
+  border-radius: var(--r);
+  background: var(--card);
+  padding: 48px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
 }
-.drop-zone:hover, .drop-zone.drag-over { border-color: var(--c-work); background: #161a20; }
-.drop-icon { font-size: 48px; margin-bottom: 20px; opacity: 0.6; }
-
-/* ─── HEADER ─── */
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.header-left { display: flex; align-items: center; gap: 14px; }
-.logo-box { 
-  width: 36px; height: 36px; background: #22272e; border: 1px solid var(--border);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center; 
-  color: var(--text-sec); font-weight: 800; font-size: 14px;
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--sage);
+  background: var(--card-deep);
 }
-.header-titles h1 { font-size: 19px; font-weight: 500; letter-spacing: -0.01em; }
-.header-titles p { font-size: 11px; color: var(--text-mute); }
-.status-tag { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-mute); }
-.status-tag::before { content: ''; width: 7px; height: 7px; background: var(--c-work); border-radius: 50%; box-shadow: 0 0 10px var(--c-work); }
-
-/* ─── TOP KPI ROW ─── */
-.kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
-.kpi-card {
-  background: var(--surface); border: 1.2px solid var(--border); border-radius: var(--r);
-  padding: 24px; position: relative;
+.drop-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: var(--sage-soft);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 24px;
 }
-.kpi-card.work { border-top: 3px solid var(--c-work); box-shadow: 0 10px 30px -10px rgba(168, 197, 160, 0.2); }
-.kpi-card.prof { border-top: 3px solid var(--c-profiled); box-shadow: 0 10px 30px -10px rgba(126, 168, 176, 0.2); }
-.kpi-card.mile { border-top: 3px solid var(--c-milestone); box-shadow: 0 10px 30px -10px rgba(197, 160, 160, 0.2); }
+.drop-title { font-size: 15px; font-weight: 500; color: var(--text-pri); margin-bottom: 6px; }
+.drop-hint  { font-size: 12px; color: var(--text-mute); }
+.drop-hint span { color: var(--sage); font-weight: 500; cursor: pointer; }
+#file-input { display: none; }
 
-.kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-sec); margin-bottom: 14px; }
-.kpi-main { font-size: 36px; font-weight: 500; margin-bottom: 18px; display: flex; align-items: baseline; gap: 10px; }
-.kpi-pct { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 12px; background: rgba(255,255,255,0.06); color: var(--text-sec); }
-
-.kpi-legend { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
-.legend-item { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; }
-.legend-left { display: flex; align-items: center; gap: 8px; color: var(--text-sec); }
-.legend-dot { width: 7px; height: 7px; border-radius: 2px; }
-
-/* ─── MAIN GRID (Left Sidebar) ─── */
-.main-grid { display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin-bottom: 16px; }
-
-.sidebar { display: flex; flex-direction: column; gap: 16px; }
-.side-card { background: var(--surface); border: 1.2px solid var(--border); border-radius: var(--r); padding: 22px; }
-.side-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-mute); margin-bottom: 18px; letter-spacing: 0.1em; }
-
-.pill-group { display: flex; gap: 8px; margin-bottom: 20px; }
-.pill { 
-  background: transparent; border: 1px solid var(--border); color: var(--text-mute); 
-  padding: 5px 12px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;
+.upload-note {
+  margin-top: 20px;
+  font-size: 11.5px;
+  color: var(--text-mute);
+  display: flex; align-items: center; gap: 6px;
 }
-.pill.active { background: var(--c-work-soft); border-color: var(--c-work); color: var(--c-work); }
+.upload-note::before { content: '🔒'; font-size: 13px; }
 
-.list-row { margin-bottom: 16px; }
-.list-top { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 6px; }
-.list-name { color: var(--text-sec); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
-.list-val { font-weight: 600; }
-.list-bar-bg { height: 2px; background: rgba(255,255,255,0.04); border-radius: 2px; }
-.list-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+/* ─── LOADING ─── */
+#loading-screen {
+  display: none;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+.spinner {
+  width: 36px; height: 36px;
+  border: 2.5px solid var(--border-med);
+  border-top-color: var(--sage);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--text-mute); }
 
-/* ─── CHART PANEL ─── */
-.chart-panel { background: var(--surface); border: 1.2px solid var(--border); border-radius: var(--r); padding: 28px; }
-.chart-tabs { display: flex; gap: 12px; margin-bottom: 28px; }
+/* ─── MAIN DASHBOARD ─── */
+#dashboard { display: none; padding: 24px 28px 36px; }
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.oxford-badge {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border-med);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.header-title h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.header-title p {
+  font-size: 11px; color: var(--text-mute);
+  letter-spacing: 0.04em; margin-top: 1px;
+}
+.header-right {
+  display: flex; align-items: center; gap: 16px;
+}
+.live-dot {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--text-mute);
+}
+.live-dot::before {
+  content:''; display: block; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--sage);
+}
+.reload-btn {
+  background: var(--card); border: 1px solid var(--border-med);
+  color: var(--text-sec); font-size: 11.5px;
+  padding: 5px 12px; border-radius: 20px;
+  cursor: pointer; font-family: inherit;
+  transition: all .2s;
+}
+.reload-btn:hover { border-color: var(--sage); color: var(--sage); }
+
+/* KPI STRIP */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.kpi {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px 16px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .4s ease both;
+}
+.kpi::after {
+  content:''; position: absolute;
+  top:0; left:0; right:0; height:2.5px;
+  border-radius: var(--r) var(--r) 0 0;
+}
+.kpi.sage::after   { background: var(--sage); }
+.kpi.sky::after    { background: var(--sky); }
+.kpi.rose::after   { background: var(--rose); }
+
+.kpi-label {
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-mute); margin-bottom: 7px;
+}
+.kpi-main {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 400;
+  color: var(--text-pri); line-height: 1;
+  margin-bottom: 12px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.badge {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 20px;
+}
+.badge-rose   { background: var(--rose-soft);   color: var(--rose); }
+.badge-sage   { background: var(--sage-soft);   color: var(--sage); }
+.badge-amber  { background: var(--amber-soft);  color: var(--amber); }
+.kpi-rows { display: flex; flex-direction: column; gap: 5px; }
+.kpi-row  { display: flex; align-items: center; justify-content: space-between; }
+.kpi-type {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-sec);
+}
+.kpi-type i {
+  display: inline-block; width: 7px; height: 7px; border-radius: 2px;
+}
+.kpi-val { font-size: 11.5px; font-weight: 500; }
+
+/* MAIN GRID */
+.main-grid {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* SIDEBAR */
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  animation: fadeUp .45s ease both;
+}
+.card-title {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-mute); margin-bottom: 14px;
+}
+
+/* Funders tab pills */
+.tab-pills { display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; }
+.pill {
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer; border: none; outline: none;
+  transition: all .15s; font-family: inherit;
+  letter-spacing: 0.03em;
+}
+.pill-sage   { background: var(--sage-soft);   color: var(--sage); }
+.pill-sky    { background: var(--sky-soft);    color: var(--sky); }
+.pill-amber  { background: var(--amber-soft);  color: var(--amber); }
+.pill-mute   { background: var(--card-deep);   color: var(--text-mute); }
+.pill:hover  { opacity: .8; }
+
+/* Funder rows */
+.funder-item { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.funder-item:last-child { border-bottom: none; }
+.funder-top  { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.funder-name { font-size: 11.5px; color: var(--text-sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 155px; }
+.funder-amt  { font-size: 11.5px; font-weight: 500; flex-shrink: 0; }
+.bar-bg      { height: 3px; background: var(--border-med); border-radius: 2px; }
+.bar-fill    { height: 3px; border-radius: 2px; transition: width .4s ease; }
+
+/* Dept rows */
+.dept-item { display: flex; align-items: center; gap: 9px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.dept-item:last-child { border-bottom: none; }
+.dept-code-badge {
+  width: 26px; height: 26px; border-radius: 6px;
+  font-size: 9.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; letter-spacing: 0.02em;
+}
+.dept-info { flex: 1; min-width: 0; }
+.dept-name { font-size: 11px; color: var(--text-sec); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dept-bar-bg { height: 3px; background: var(--border-med); border-radius: 2px; margin-top: 3px; }
+.dept-bar-fill { height: 3px; border-radius: 2px; }
+.dept-val { font-size: 11px; font-weight: 500; flex-shrink: 0; }
+
+/* CHART PANEL */
+.chart-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 22px;
+  animation: fadeUp .45s .05s ease both;
+}
+.chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.chart-tabs   { display: flex; gap: 6px; }
 .chart-tab {
-  background: #191e24; border: 1px solid var(--border); color: var(--text-mute);
-  padding: 6px 18px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer;
+  padding: 4px 13px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer; border: none; font-family: inherit;
+  background: var(--card-deep); color: var(--text-mute);
+  transition: all .15s;
 }
-.chart-tab.active { background: var(--c-work-soft); border-color: var(--c-work); color: var(--c-work); }
+.chart-tab.act-sage  { background: var(--sage-soft);  color: var(--sage); }
+.chart-tab.act-sky   { background: var(--sky-soft);   color: var(--sky); }
+.chart-tab.act-amber { background: var(--amber-soft); color: var(--amber); }
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.chart-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-mute); margin-bottom: 10px; }
+svg { overflow: visible; display: block; }
+.ax { font-family: 'Inter','Roboto',sans-serif; fill: #5e6471; font-size: 8.5px; }
+.c-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.c-area { opacity: .1; }
 
-.charts-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; }
-.chart-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-mute); margin-bottom: 24px; }
-
-/* ─── BOTTOM ROW ─── */
-.bottom-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.inv-card { background: var(--surface); border: 1.2px solid var(--border); border-radius: var(--r); padding: 24px; }
-.inv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.inv-label { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; }
-.inv-badge { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; color: var(--text-sec); }
-.inv-amt { font-size: 32px; font-weight: 500; margin-bottom: 16px; }
-
-/* ─── NEON GLOW BAR ─── */
-.neon-footer {
-  position: fixed; bottom: 24px; left: 32px; right: 32px; height: 12px;
-  background: rgba(255,255,255,0.02); border-radius: 10px; overflow: hidden;
+/* BOTTOM ROW */
+.bottom-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.debt-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  animation: fadeUp .5s .1s ease both;
 }
-.neon-fill {
-  height: 100%; width: 50%;
-  background: linear-gradient(90deg, transparent, var(--c-work), var(--c-profiled), transparent);
-  box-shadow: 0 0 25px rgba(168, 197, 160, 0.4);
-  animation: sweep 4s infinite alternate ease-in-out;
+.debt-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.debt-type-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-mute); }
+.debt-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 400; line-height: 1;
+  margin-bottom: 4px;
 }
-@keyframes sweep { from { transform: translateX(-40%); } to { transform: translateX(140%); } }
+.debt-sublabel { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.debt-bar-bg { height: 5px; background: var(--border-med); border-radius: 3px; overflow: hidden; }
+.debt-bar-fill { height: 5px; border-radius: 3px; }
+.debt-stats { display: flex; justify-content: space-between; margin-top: 8px; }
+.debt-stat { font-size: 10.5px; color: var(--text-sec); }
+.debt-stat span { font-weight: 600; color: var(--text-pri); }
 
-/* SVG */
-.grid-line { stroke: rgba(255,255,255,0.03); stroke-width: 1; }
-.axis-text { fill: #475569; font-size: 9px; font-weight: 600; }
-.chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; }
-.chart-area { opacity: 0.12; }
-.bar-dim { fill: rgba(255,255,255,0.03); rx: 5; }
-.bar-glow { rx: 5; }
 
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
 </style>
 </head>
 <body>
 
+<!-- UPLOAD SCREEN -->
 <div id="upload-screen">
+  <div class="upload-logo">Research Finance · Automation</div>
+  <div class="upload-sub">University of Oxford · 2025–26</div>
+
   <div class="drop-zone" id="drop-zone">
-    <input type="file" id="file-input" style="display:none" accept=".xlsx,.xls">
+    <input type="file" id="file-input" accept=".xlsx,.xls">
     <div class="drop-icon">📊</div>
-    <div style="font-size: 20px; font-weight: 500; margin-bottom: 8px;">Upload Finance Workbook</div>
-    <div style="font-size: 12px; color: var(--text-mute);">Drop your 2025–26 ledger here to begin</div>
+    <div class="drop-title">Drop your workbook here</div>
+    <div class="drop-hint">or <span onclick="document.getElementById('file-input').click()">browse to upload</span> an .xlsx file</div>
   </div>
+  <div class="upload-note">Your file is processed entirely in-browser. Nothing is uploaded to any server.</div>
 </div>
 
-<header>
-  <div class="header-left">
-    <div class="logo-box">R</div>
-    <div class="header-titles">
-      <h1>Research Finance · Automation</h1>
-      <p id="ledger-title">Financial Year 2025–26 · Ledger Overview</p>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="status-tag">System Ready</div>
-    <button style="background:none; border:none; color:var(--text-mute); font-size:11px; cursor:pointer; text-decoration: underline; margin-left: 15px;" onclick="location.reload()">Reset</button>
-  </div>
-</header>
-
-<div class="kpi-row">
-  <div class="kpi-card work">
-    <div class="kpi-label">Total Invoices Raised</div>
-    <div class="kpi-main" id="k-inv-tot">0</div>
-    <div class="kpi-legend">
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-work)"></div> Work</div><span id="s-inv-w">0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-profiled)"></div> Profiled</div><span id="s-inv-p">0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-milestone)"></div> Milestone</div><span id="s-inv-m">0</span></div>
-    </div>
-  </div>
-  <div class="kpi-card prof">
-    <div class="kpi-label">Total Amount Invoiced</div>
-    <div class="kpi-main" id="k-amt-tot">£0</div>
-    <div class="kpi-legend">
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-work)"></div> Work</div><span id="s-amt-w">£0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-profiled)"></div> Profiled</div><span id="s-amt-p">£0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-milestone)"></div> Milestone</div><span id="s-amt-m">£0</span></div>
-    </div>
-  </div>
-  <div class="kpi-card mile">
-    <div class="kpi-label">Current Debt</div>
-    <div class="kpi-main" id="k-debt-tot">£0 <span class="kpi-pct" id="k-debt-pct">0%</span></div>
-    <div class="kpi-legend">
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-work)"></div> Work</div><span id="s-debt-w">£0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-profiled)"></div> Profiled</div><span id="s-debt-p">£0</span></div>
-      <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:var(--c-milestone)"></div> Milestone</div><span id="s-debt-m">£0</span></div>
-    </div>
-  </div>
+<!-- LOADING -->
+<div id="loading-screen" style="display:none;min-height:100vh;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div class="spinner"></div>
+  <div class="loading-text">Parsing workbook…</div>
 </div>
 
-<div class="main-grid">
-  <div class="sidebar">
-    <div class="side-card">
-      <div class="side-title">Most Automated Funders</div>
-      <div class="pill-group">
-        <button class="pill active" onclick="setSideTab('WORK', this)">Work</button>
-        <button class="pill" onclick="setSideTab('PROFILED', this)">Profiled</button>
-        <button class="pill" onclick="setSideTab('MILESTONE', this)">Milestone</button>
-      </div>
-      <div id="funder-list"></div>
-    </div>
-    <div class="side-card">
-      <div class="side-title">Most Automated Departments</div>
-      <div id="dept-list"></div>
-    </div>
-  </div>
-
-  <div class="chart-panel">
-    <div class="chart-tabs">
-      <button class="chart-tab active" onclick="setMainTab('WORK', this)">Work</button>
-      <button class="chart-tab" onclick="setMainTab('PROFILED', this)">Profiled</button>
-      <button class="chart-tab" onclick="setMainTab('MILESTONE', this)">Milestone</button>
-    </div>
-    <div class="charts-split">
-      <div class="chart-box">
-        <div class="chart-label">Invoices Raised by Month</div>
-        <svg id="svg-line" width="100%" height="220" viewBox="0 0 500 220"></svg>
-      </div>
-      <div class="chart-box">
-        <div class="chart-label">Paid vs Outstanding (%)</div>
-        <svg id="svg-bar" width="100%" height="220" viewBox="0 0 400 220"></svg>
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <header>
+    <div class="header-left">
+      <div class="oxford-badge">🎓</div>
+      <div class="header-title">
+        <h1>Research Finance · Automation</h1>
+        <p id="header-sub">Financial Year 2025–26 · Invoicing Overview</p>
       </div>
     </div>
-  </div>
-</div>
+    <div class="header-right">
+      <div class="live-dot" id="last-updated">Data loaded</div>
+      <button class="reload-btn" onclick="resetDashboard()">↩ Load new file</button>
+    </div>
+  </header>
 
-<div class="bottom-row">
-  <div class="inv-card">
-    <div class="inv-header"><span class="inv-label">Work Invoicer</span><span class="inv-badge" id="b-w">0%</span></div>
-    <div class="inv-amt" style="color:var(--c-work)" id="a-w">£0</div>
-    <div class="list-bar-bg" style="height:5px;"><div class="list-bar-fill" id="bar-w" style="background:var(--c-work); width:0%"></div></div>
-  </div>
-  <div class="inv-card">
-    <div class="inv-header"><span class="inv-label">Profiled Invoicer</span><span class="inv-badge" id="b-p">0%</span></div>
-    <div class="inv-amt" style="color:var(--c-profiled)" id="a-p">£0</div>
-    <div class="list-bar-bg" style="height:5px;"><div class="list-bar-fill" id="bar-p" style="background:var(--c-profiled); width:0%"></div></div>
-  </div>
-  <div class="inv-card">
-    <div class="inv-header"><span class="inv-label">Milestone Invoicer</span><span class="inv-badge" id="b-m">0%</span></div>
-    <div class="inv-amt" style="color:var(--c-milestone)" id="a-m">£0</div>
-    <div class="list-bar-bg" style="height:5px;"><div class="list-bar-fill" id="bar-m" style="background:var(--c-milestone); width:0%"></div></div>
-  </div>
-</div>
+  <!-- KPIs -->
+  <div class="kpi-strip">
+    <div class="kpi sage">
+      <div class="kpi-label">Total Invoices Raised</div>
+      <div class="kpi-main" id="kpi-inv-total">—</div>
+      <div class="kpi-rows">
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sage)"></i> Work</div>
+          <div class="kpi-val" id="kpi-inv-work">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sky)"></i> Profiled</div>
+          <div class="kpi-val" id="kpi-inv-profiled">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--amber)"></i> Milestone</div>
+          <div class="kpi-val" id="kpi-inv-milestone">—</div>
+        </div>
+      </div>
+    </div>
 
-<div class="neon-footer"><div class="neon-fill"></div></div>
+    <div class="kpi sky">
+      <div class="kpi-label">Total Amount Invoiced</div>
+      <div class="kpi-main" id="kpi-amt-total">—</div>
+      <div class="kpi-rows">
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sage)"></i> Work</div>
+          <div class="kpi-val" id="kpi-amt-work">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sky)"></i> Profiled</div>
+          <div class="kpi-val" id="kpi-amt-profiled">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--amber)"></i> Milestone</div>
+          <div class="kpi-val" id="kpi-amt-milestone">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi rose">
+      <div class="kpi-label">Current Debt</div>
+      <div class="kpi-main" id="kpi-debt-total">— <span class="badge badge-rose" id="kpi-debt-pct">—%</span></div>
+      <div class="kpi-rows">
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sage)"></i> Work</div>
+          <div class="kpi-val" id="kpi-debt-work">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--sky)"></i> Profiled</div>
+          <div class="kpi-val" id="kpi-debt-profiled">—</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi-type"><i style="background:var(--amber)"></i> Milestone</div>
+          <div class="kpi-val" id="kpi-debt-milestone">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- TOP FUNDERS -->
+      <div class="card">
+        <div class="card-title">Most Automated Funders</div>
+        <div class="tab-pills">
+          <button class="pill pill-sage" onclick="setFunderTab('WORK',this)">Work</button>
+          <button class="pill pill-sky"  onclick="setFunderTab('PROFILED',this)">Profiled</button>
+          <button class="pill pill-amber" onclick="setFunderTab('MILESTONE',this)">Milestone</button>
+        </div>
+        <div id="funder-list"></div>
+      </div>
+
+      <!-- TOP DEPTS -->
+      <div class="card">
+        <div class="card-title">Most Automated Departments</div>
+        <div id="dept-list"></div>
+      </div>
+
+    </div>
+
+    <!-- CHART PANEL -->
+    <div class="chart-panel">
+      <div class="chart-header">
+        <div class="chart-tabs">
+          <button class="chart-tab act-sage" id="ct-work"      onclick="setChartTab('WORK')">Work</button>
+          <button class="chart-tab"          id="ct-profiled"  onclick="setChartTab('PROFILED')">Profiled</button>
+          <button class="chart-tab"          id="ct-milestone" onclick="setChartTab('MILESTONE')">Milestone</button>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div>
+          <div class="chart-label">Invoices Raised by Month</div>
+          <svg id="line-chart" width="100%" viewBox="0 0 380 170"></svg>
+        </div>
+        <div>
+          <div class="chart-label">Paid vs Outstanding (%)</div>
+          <svg id="bar-chart" width="100%" viewBox="0 0 380 170"></svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DEBT CARDS -->
+  <div class="bottom-row" id="debt-row">
+    <div class="debt-card">
+      <div class="debt-card-header">
+        <div class="debt-type-label">Work Invoices</div>
+        <span class="badge badge-sage" id="debt-work-pct">—</span>
+      </div>
+      <div class="debt-amount" style="color:var(--sage)" id="debt-work-amt">—</div>
+      <div class="debt-sublabel">Outstanding</div>
+      <div class="debt-bar-bg"><div class="debt-bar-fill" id="debt-work-bar" style="background:var(--sage);width:0%"></div></div>
+      <div class="debt-stats">
+        <div class="debt-stat">Total invoiced: <span id="debt-work-total">—</span></div>
+        <div class="debt-stat">Collected: <span id="debt-work-paid">—</span></div>
+      </div>
+    </div>
+    <div class="debt-card">
+      <div class="debt-card-header">
+        <div class="debt-type-label">Profiled Invoices</div>
+        <span class="badge badge-rose" id="debt-profiled-pct">—</span>
+      </div>
+      <div class="debt-amount" style="color:var(--sky)" id="debt-profiled-amt">—</div>
+      <div class="debt-sublabel">Outstanding</div>
+      <div class="debt-bar-bg"><div class="debt-bar-fill" id="debt-profiled-bar" style="background:var(--sky);width:0%"></div></div>
+      <div class="debt-stats">
+        <div class="debt-stat">Total invoiced: <span id="debt-profiled-total">—</span></div>
+        <div class="debt-stat">Collected: <span id="debt-profiled-paid">—</span></div>
+      </div>
+    </div>
+    <div class="debt-card">
+      <div class="debt-card-header">
+        <div class="debt-type-label">Milestone Invoices</div>
+        <span class="badge badge-amber" id="debt-milestone-pct">—</span>
+      </div>
+      <div class="debt-amount" style="color:var(--amber)" id="debt-milestone-amt">—</div>
+      <div class="debt-sublabel">Outstanding</div>
+      <div class="debt-bar-bg"><div class="debt-bar-fill" id="debt-milestone-bar" style="background:var(--amber);width:0%"></div></div>
+      <div class="debt-stats">
+        <div class="debt-stat">Total invoiced: <span id="debt-milestone-total">—</span></div>
+        <div class="debt-stat">Collected: <span id="debt-milestone-paid">—</span></div>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- end dashboard -->
 
 <script>
-let state = { data:[], depts:{}, summary:{ WORK:{}, PROFILED:{}, MILESTONE:{} }, sideTab:'WORK', mainTab:'WORK' };
-const MONTH_NAMES = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
-const FY_KEYS = ['2025-8','2025-9','2025-10','2025-11','2025-12','2026-1','2026-2','2026-3','2026-4','2026-5','2026-6','2026-7'];
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let state = {
+  invoices: [],       // All Invoices rows
+  openInvoices: [],   // OpenInvoices rows
+  deptMap: {},        // code → name
+  months: [],
+  byType: {},         // WORK/PROFILED/MILESTONE → { monthly counts, paid%, funder totals, dept totals }
+  totals: {},
+  debtByType: {},
+  currentChartTab: 'WORK',
+  currentFunderTab: 'WORK'
+};
 
+// ─────────────────────────────────────────────
+//  FILE HANDLING
+// ─────────────────────────────────────────────
 const dz = document.getElementById('drop-zone');
 const fi = document.getElementById('file-input');
 
-// Handle click
-dz.addEventListener('click', () => fi.click());
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f);
+});
+fi.addEventListener('change', () => { if (fi.files[0]) processFile(fi.files[0]); });
 
-// Handle drag and drop
-dz.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dz.classList.add('drag-over');
-});
-dz.addEventListener('dragleave', () => {
-  dz.classList.remove('drag-over');
-});
-dz.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dz.classList.remove('drag-over');
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    handleFile(e.dataTransfer.files[0]);
-  }
-});
+function processFile(file) {
+  document.getElementById('upload-screen').style.display = 'none';
+  const ls = document.getElementById('loading-screen');
+  ls.style.display = 'flex';
 
-// Handle input change
-fi.addEventListener('change', (e) => {
-  if (e.target.files && e.target.files[0]) {
-    handleFile(e.target.files[0]);
-  }
-});
-
-function handleFile(file) {
   const reader = new FileReader();
-  reader.onload = (evt) => {
+  reader.onload = e => {
     try {
-      const wb = XLSX.read(evt.target.result, { type: 'array', cellDates: true });
-      process(wb, file.name);
+      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true, dateNF: 'yyyy-mm-dd' });
+      parseWorkbook(wb, file.name);
+      ls.style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
     } catch(err) {
-      console.error(err);
-      alert("Error parsing file. Please ensure it is a valid Excel workbook.");
+      ls.style.display = 'none';
+      alert('Could not parse workbook: ' + err.message);
+      resetDashboard();
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
-function process(wb, filename) {
-  // Clear old data
-  state.depts = {};
-  state.data = [];
+function resetDashboard() {
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('upload-screen').style.display = 'flex';
+  document.getElementById('file-input').value = '';
+}
 
-  const dSheet = wb.Sheets['Depts'];
-  if(dSheet) {
-    XLSX.utils.sheet_to_json(dSheet).forEach(r => {
-      const c = String(r.Code || r['Code'] || Object.values(r)[0]);
-      const n = String(r.Name || r['Name'] || Object.values(r)[1]);
-      state.depts[c] = n;
+// ─────────────────────────────────────────────
+//  PARSE
+// ─────────────────────────────────────────────
+function parseWorkbook(wb, filename) {
+  // Dept map
+  const dws = wb.Sheets['Depts'];
+  const drows = XLSX.utils.sheet_to_json(dws, { header:1, defval:null });
+  state.deptMap = {};
+  drows.slice(1).forEach(r => { if (r[0] && r[1]) state.deptMap[String(r[0]).trim()] = String(r[1]).trim(); });
+
+  // All Invoices – raw rows (raw:true keeps numeric serial dates; cellDates handled at wb.read level)
+  const aws = wb.Sheets['All Invoices'];
+  const arows = XLSX.utils.sheet_to_json(aws, { header:1, defval:null, raw:true });
+
+  const invoices = [];
+  for (let i = 2; i < arows.length; i++) {
+    const r = arows[i];
+    if (r[0] == null || r[1] == null) continue;
+
+    // Month: SheetJS with cellDates:true gives a JS Date; with raw it may be serial number or Date
+    let dt;
+    const rawMonth = r[1];
+    if (rawMonth instanceof Date) {
+      dt = rawMonth;
+    } else if (typeof rawMonth === 'number') {
+      // Excel serial date → JS Date
+      dt = new Date(Math.round((rawMonth - 25569) * 86400 * 1000));
+    } else {
+      dt = new Date(rawMonth);
+    }
+    if (!dt || isNaN(dt.getTime())) continue;
+
+    const type = String(r[8] || '').toUpperCase().trim();
+    if (!['WORK','PROFILED','MILESTONE'].includes(type)) continue;
+
+    const amt         = parseFloat(r[6]) || 0;
+    const outstanding = parseFloat(r[9]) || 0;
+    const paid        = parseFloat(r[10]) || 0;
+    const dept        = String(r[2] || '').trim();
+    const paying      = String(r[4] || '').trim();
+
+    invoices.push({ dt, dept, paying, amt, type, outstanding, paid });
+  }
+  state.invoices = invoices;
+
+  computeAggregates();
+  renderAll(filename);
+}
+
+// ─────────────────────────────────────────────
+//  AGGREGATE
+// ─────────────────────────────────────────────
+const MONTH_NAMES = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
+const FY_MONTHS = [
+  { y: 2025, m: 8 }, { y: 2025, m: 9 }, { y: 2025, m: 10 }, { y: 2025, m: 11 }, { y: 2025, m: 12 },
+  { y: 2026, m: 1 }, { y: 2026, m: 2 }, { y: 2026, m: 3 }, { y: 2026, m: 4 },
+  { y: 2026, m: 5 }, { y: 2026, m: 6 }, { y: 2026, m: 7 }
+];
+
+function monthKey(dt) {
+  return `${dt.getFullYear()}-${dt.getMonth()+1}`;
+}
+
+function computeAggregates() {
+  const types = ['WORK','PROFILED','MILESTONE'];
+  const byType = {};
+
+  types.forEach(t => {
+    byType[t] = {
+      monthCount: {},
+      monthAmt: {},
+      monthPaid: {},
+      monthOutstanding: {},
+      funderAmt: {},
+      deptAmt: {}
+    };
+  });
+
+  FY_MONTHS.forEach(fm => {
+    const k = `${fm.y}-${fm.m}`;
+    types.forEach(t => {
+      byType[t].monthCount[k] = 0;
+      byType[t].monthAmt[k] = 0;
+      byType[t].monthPaid[k] = 0;
+      byType[t].monthOutstanding[k] = 0;
     });
-  }
+  });
 
-  const iSheet = wb.Sheets['All Invoices'];
-  if (!iSheet) {
-    alert("Workbook missing 'All Invoices' sheet.");
-    location.reload();
-    return;
-  }
+  let totalInv = 0, totalAmt = 0, totalOut = 0;
+  const typeInv = { WORK:0, PROFILED:0, MILESTONE:0 };
+  const typeAmt = { WORK:0, PROFILED:0, MILESTONE:0 };
+  const typeOut = { WORK:0, PROFILED:0, MILESTONE:0 };
 
-  const raw = XLSX.utils.sheet_to_json(iSheet, { range: 1 });
-  state.data = raw.map(r => ({
-    date: new Date(r.Month || r['Invoice Date']),
-    type: String(r.Type || r['Invoice Type'] || '').toUpperCase().trim(),
-    amt: parseFloat(r.Amount || 0),
-    paid: parseFloat(r.Paid || 0),
-    out: parseFloat(r.Outstanding || 0),
-    funder: r['Paying Body'] || r.Funder,
-    dept: String(r.Dept || r.Department || '').trim()
-  })).filter(r => ['WORK','PROFILED','MILESTONE'].includes(r.type));
+  state.invoices.forEach(inv => {
+    const t = byType[inv.type];
+    if (!t) return;
+    const k = monthKey(inv.dt);
+    if (t.monthCount[k] !== undefined) {
+      t.monthCount[k]++;
+      t.monthAmt[k] += inv.amt;
+      t.monthPaid[k] += inv.paid;
+      t.monthOutstanding[k] += inv.outstanding;
+    }
+    const funder = (inv.paying || '').trim();
+    if (funder) t.funderAmt[funder] = (t.funderAmt[funder]||0) + inv.amt;
+    const dept = (inv.dept || '').trim();
+    if (dept) t.deptAmt[dept] = (t.deptAmt[dept]||0) + inv.amt;
 
-  if (state.data.length === 0) {
-    alert("No valid invoice data found in 'All Invoices' sheet.");
-    location.reload();
-    return;
-  }
+    typeInv[inv.type]++;
+    typeAmt[inv.type] += inv.amt;
+    typeOut[inv.type] += inv.outstanding;
+    totalInv++;
+    totalAmt += inv.amt;
+    totalOut += inv.outstanding;
+  });
 
-  aggregate();
-  document.getElementById('upload-screen').style.display = 'none';
-  document.getElementById('ledger-title').innerText = `Workbook: ${filename}`;
-  render();
+  state.byType = byType;
+  state.totals = { totalInv, totalAmt, totalOut, typeInv, typeAmt, typeOut };
 }
 
-function aggregate() {
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function fmt(n) {
+  if (n >= 1e6) return '£' + (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '£' + Math.round(n/1e3) + 'K';
+  return '£' + Math.round(n).toLocaleString();
+}
+function fmtFull(n) { return '£' + n.toLocaleString('en-GB', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function pct(a,b) { return b ? Math.round(a/b*100) : 0; }
+
+function renderAll(filename) {
+  // Header
+  const now = new Date();
+  document.getElementById('last-updated').textContent =
+    `Loaded ${filename} · ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
+
+  // KPIs
+  const { totalInv, totalAmt, totalOut, typeInv, typeAmt, typeOut } = state.totals;
+  document.getElementById('kpi-inv-total').innerHTML    = totalInv;
+  document.getElementById('kpi-inv-work').textContent   = typeInv.WORK;
+  document.getElementById('kpi-inv-profiled').textContent = typeInv.PROFILED;
+  document.getElementById('kpi-inv-milestone').textContent = typeInv.MILESTONE;
+
+  document.getElementById('kpi-amt-total').innerHTML    = fmt(totalAmt);
+  document.getElementById('kpi-amt-work').textContent   = fmt(typeAmt.WORK);
+  document.getElementById('kpi-amt-profiled').textContent = fmt(typeAmt.PROFILED);
+  document.getElementById('kpi-amt-milestone').textContent = fmt(typeAmt.MILESTONE);
+
+  const debtPct = pct(totalOut, totalAmt);
+  document.getElementById('kpi-debt-total').innerHTML   = fmt(totalOut) + ` <span class="badge badge-rose">${debtPct}%</span>`;
+  document.getElementById('kpi-debt-work').textContent  = fmt(typeOut.WORK);
+  document.getElementById('kpi-debt-profiled').textContent = fmt(typeOut.PROFILED);
+  document.getElementById('kpi-debt-milestone').textContent = fmt(typeOut.MILESTONE);
+
+  // Debt cards
   ['WORK','PROFILED','MILESTONE'].forEach(t => {
-    state.summary[t] = { count:0, amt:0, out:0, funders:{}, depts:{}, monthly: FY_KEYS.reduce((a,k)=>({...a,[k]:{c:0,a:0,p:0}}),{}) };
+    const key = t.toLowerCase();
+    const amt = state.totals.typeAmt[t] || 0;
+    const out = state.totals.typeOut[t] || 0;
+    const p = pct(out, amt);
+    document.getElementById(`debt-${key}-amt`).textContent   = fmt(out);
+    document.getElementById(`debt-${key}-pct`).textContent   = p + '%';
+    document.getElementById(`debt-${key}-bar`).style.width   = p + '%';
+    document.getElementById(`debt-${key}-total`).textContent = fmt(amt);
+    document.getElementById(`debt-${key}-paid`).textContent  = fmt(amt - out);
   });
-  state.data.forEach(r => {
-    const s = state.summary[r.type];
-    const mKey = `${r.date.getFullYear()}-${r.date.getMonth()+1}`;
-    s.count++; s.amt += r.amt; s.out += r.out;
-    if(s.monthly[mKey]) { s.monthly[mKey].c++; s.monthly[mKey].a += r.amt; s.monthly[mKey].p += r.paid; }
-    if(r.funder) s.funders[r.funder] = (s.funders[r.funder]||0) + r.amt;
-    if(r.dept) s.depts[r.dept] = (s.depts[r.dept]||0) + r.amt;
-  });
+
+  // Charts & sidebar
+  setFunderTab('WORK', document.querySelector('.pill-sage'));
+  renderDepts();
+  setChartTab('WORK');
 }
 
-const fmt = (n) => n >= 1e6 ? `£${(n/1e6).toFixed(2)}M` : (n >= 1e3 ? `£${(n/1e3).toFixed(1)}K` : `£${Math.round(n).toLocaleString()}`);
+// FUNDER LIST
+function setFunderTab(type, btn) {
+  state.currentFunderTab = type;
+  document.querySelectorAll('.tab-pills .pill').forEach(p => p.style.fontWeight='600');
+  const data = state.byType[type].funderAmt;
+  const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max = sorted[0]?.[1] || 1;
+  const colors = { WORK:'var(--sage)', PROFILED:'var(--sky)', MILESTONE:'var(--amber)' };
+  const col = colors[type];
+  const html = sorted.map(([name, amt]) => `
+    <div class="funder-item">
+      <div class="funder-top">
+        <div class="funder-name" title="${name}">${name}</div>
+        <div class="funder-amt">${fmt(amt)}</div>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(amt/max*100)}%;background:${col}"></div></div>
+    </div>`).join('');
+  document.getElementById('funder-list').innerHTML = html;
+}
 
-function render() {
-  const s = state.summary;
-  const tCount = s.WORK.count + s.PROFILED.count + s.MILESTONE.count;
-  const tAmt = s.WORK.amt + s.PROFILED.amt + s.MILESTONE.amt;
-  const tOut = s.WORK.out + s.PROFILED.out + s.MILESTONE.out;
-
-  document.getElementById('k-inv-tot').innerText = tCount.toLocaleString();
-  document.getElementById('s-inv-w').innerText = s.WORK.count;
-  document.getElementById('s-inv-p').innerText = s.PROFILED.count;
-  document.getElementById('s-inv-m').innerText = s.MILESTONE.count;
-
-  document.getElementById('k-amt-tot').innerText = fmt(tAmt);
-  document.getElementById('s-amt-w').innerText = fmt(s.WORK.amt);
-  document.getElementById('s-amt-p').innerText = fmt(s.PROFILED.amt);
-  document.getElementById('s-amt-m').innerText = fmt(s.MILESTONE.amt);
-
-  document.getElementById('k-debt-tot').childNodes[0].textContent = fmt(tOut) + ' ';
-  document.getElementById('k-debt-pct').innerText = `${Math.round(tOut/tAmt*100)}%`;
-  document.getElementById('s-debt-w').innerText = fmt(s.WORK.out);
-  document.getElementById('s-debt-p').innerText = fmt(s.PROFILED.out);
-  document.getElementById('s-debt-m').innerText = fmt(s.MILESTONE.out);
-
+// DEPT LIST
+function renderDepts() {
+  // Aggregate across all types
+  const combined = {};
   ['WORK','PROFILED','MILESTONE'].forEach(t => {
-    const k = t === 'WORK' ? 'w' : (t === 'PROFILED' ? 'p' : 'm');
-    const pct = Math.round(s[t].out/s[t].amt*100)||0;
-    document.getElementById(`a-${k}`).innerText = fmt(s[t].out);
-    document.getElementById(`b-${k}`).innerText = `${pct}%`;
-    document.getElementById(`bar-${k}`).style.width = `${pct}%`;
+    Object.entries(state.byType[t].deptAmt).forEach(([d,v]) => {
+      combined[d] = (combined[d]||0) + v;
+    });
+  });
+  const sorted = Object.entries(combined).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max = sorted[0]?.[1] || 1;
+  const palette = [
+    { bg:'var(--amber-soft)', col:'var(--amber)' },
+    { bg:'var(--sky-soft)',   col:'var(--sky)'   },
+    { bg:'var(--sage-soft)',  col:'var(--sage)'  },
+    { bg:'var(--lav-soft)',   col:'var(--lavender)' },
+    { bg:'var(--rose-soft)',  col:'var(--rose)'  }
+  ];
+  const html = sorted.map(([code, amt], i) => {
+    const p = palette[i % palette.length];
+    const name = state.deptMap[code] || code;
+    const short = name.length > 22 ? name.slice(0,22)+'…' : name;
+    return `<div class="dept-item">
+      <div class="dept-code-badge" style="background:${p.bg};color:${p.col}">${code}</div>
+      <div class="dept-info">
+        <div class="dept-name" title="${name}">${short}</div>
+        <div class="dept-bar-bg"><div class="dept-bar-fill" style="width:${Math.round(amt/max*100)}%;background:${p.col}"></div></div>
+      </div>
+      <div class="dept-val">${fmt(amt)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('dept-list').innerHTML = html;
+}
+
+// CHARTS
+function setChartTab(type) {
+  state.currentChartTab = type;
+  const map = { WORK: 'act-sage', PROFILED: 'act-sky', MILESTONE: 'act-amber' };
+  ['work','profiled','milestone'].forEach(k => {
+    const btn = document.getElementById('ct-'+k);
+    btn.className = 'chart-tab';
+    if (k.toUpperCase() === type) btn.classList.add(map[type]);
+  });
+  const colors = { WORK:'#a8c5a0', PROFILED:'#a8c0da', MILESTONE:'#d4b896' };
+  const col = colors[type];
+  renderLineChart(type, col);
+  renderBarChart(type, col);
+}
+
+function renderLineChart(type, col) {
+  const bt = state.byType[type];
+  const vals = FY_MONTHS.map(fm => bt.monthCount[`${fm.y}-${fm.m}`] || 0);
+  const W=380, H=160, pL=24, pR=8, pT=18, pB=26;
+  const pw=W-pL-pR, ph=H-pT-pB, n=vals.length;
+  const maxV = Math.max(...vals, 1);
+
+  const pts = vals.map((v,i) => ({
+    x: pL + (i/(n-1))*pw,
+    y: pT + ph - (v/maxV)*ph
+  }));
+
+  const lineD = pts.map((p,i) => (i===0?`M${p.x},${p.y}`:`L${p.x},${p.y}`)).join(' ');
+  const areaD = `${lineD} L${pts[n-1].x},${pT+ph} L${pts[0].x},${pT+ph} Z`;
+
+  const step = Math.ceil(maxV/4) || 1;
+  let yLines='', xLabels='', dots='', labels='', peakEl='';
+  const peakIdx = vals.indexOf(Math.max(...vals));
+
+  for (let s=0; s<=4; s++) {
+    const v=s*step, y=pT+ph-(v/maxV)*ph;
+    yLines += `<line x1="${pL}" x2="${W-pR}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+    if (v>0) yLines += `<text class="ax" x="${pL-3}" y="${y+3}" text-anchor="end">${v}</text>`;
+  }
+  MONTH_NAMES.forEach((m,i) => {
+    const x = pL + (i/(n-1))*pw;
+    xLabels += `<text class="ax" x="${x}" y="${H-6}" text-anchor="middle">${m}</text>`;
+    if (vals[i] > 0) {
+      if (i === peakIdx) {
+        peakEl = `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="9" fill="none" stroke="${col}" stroke-width="1.5" opacity="0.35"/>` +
+                 `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="5" fill="${col}"/>` +
+                 `<text x="${pts[i].x}" y="${pts[i].y - 14}" text-anchor="middle" fill="${col}" ` +
+                 `style="font-family:'Inter','Roboto',sans-serif;font-size:10px;font-weight:700">${vals[i]}</text>`;
+      } else {
+        dots   += `<circle cx="${pts[i].x}" cy="${pts[i].y}" r="3" fill="${col}"/>`;
+        labels += `<text class="ax" x="${pts[i].x}" y="${pts[i].y-7}" text-anchor="middle" fill="${col}" style="font-size:8.5px;font-weight:600">${vals[i]}</text>`;
+      }
+    }
   });
 
-  renderSidebar();
-  renderCharts();
+  document.getElementById('line-chart').innerHTML =
+    `<path class="c-area" d="${areaD}" fill="${col}"/>` +
+    `${yLines}` +
+    `<path class="c-line" d="${lineD}" stroke="${col}"/>` +
+    `${dots}${labels}${peakEl}${xLabels}`;
 }
 
-function renderSidebar() {
-  const s = state.summary[state.sideTab];
-  const color = getTabColor(state.sideTab);
-  const sortedF = Object.entries(s.funders).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const maxF = sortedF[0]?.[1] || 1;
-  document.getElementById('funder-list').innerHTML = sortedF.map(([n,v]) => `
-    <div class="list-row">
-      <div class="list-top"><span class="list-name">${n}</span><span class="list-val">${fmt(v)}</span></div>
-      <div class="list-bar-bg"><div class="list-bar-fill" style="width:${v/maxF*100}%; background:${color}"></div></div>
-    </div>`).join('');
+function renderBarChart(type, col) {
+  const bt = state.byType[type];
+  const W=380, H=160, pL=24, pR=8, pT=10, pB=26;
+  const pw=W-pL-pR, ph=H-pT-pB, n=FY_MONTHS.length;
+  const bw = pw/n * 0.6, gap = pw/n;
 
-  const combD = {};
-  ['WORK','PROFILED','MILESTONE'].forEach(t => Object.entries(state.summary[t].depts).forEach(([d,v])=>combD[d]=(combD[d]||0)+v));
-  const sortedD = Object.entries(combD).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const maxD = sortedD[0]?.[1] || 1;
-  const dCols = ['#a8c5a0','#7ea8b0','#c5a0a0','#d4b896','#94a3b8'];
-  document.getElementById('dept-list').innerHTML = sortedD.map(([c,v],i) => `
-    <div class="list-row">
-      <div class="list-top"><span class="list-name">${state.depts[c] || c}</span><span class="list-val">${fmt(v)}</span></div>
-      <div class="list-bar-bg"><div class="list-bar-fill" style="width:${v/maxD*100}%; background:${dCols[i]}"></div></div>
-    </div>`).join('');
-}
+  let bars='', xLabels='', yLabels='';
 
-function renderCharts() {
-  const s = state.summary[state.mainTab];
-  const color = getTabColor(state.mainTab);
-  
-  const lineSvg = document.getElementById('svg-line');
-  const counts = FY_KEYS.map(k => s.monthly[k].c);
-  const maxC = Math.max(...counts, 10);
-  const pts = counts.map((v,i) => `${(i/11)*460+20},${180-(v/maxC)*140}`);
-  let grid = ''; for(let i=0; i<=4; i++) grid += `<line class="grid-line" x1="20" y1="${180-i/4*140}" x2="480" y2="${180-i/4*140}"/>`;
-  const peakIdx = counts.indexOf(Math.max(...counts));
-  const peakX = (peakIdx/11)*460+20; const peakY = 180-(counts[peakIdx]/maxC)*140;
-  const labels = MONTH_NAMES.map((m,i) => `<text x="${(i/11)*460+20}" y="210" text-anchor="middle" class="axis-text">${m}</text>`).join('');
-
-  lineSvg.innerHTML = grid + `<path class="chart-area" fill="${color}" d="M20,180 ${pts.map(p=>'L'+p).join(' ')} L480,180 Z"/><path class="chart-line" stroke="${color}" d="M${pts.join(' L')}"/><circle cx="${peakX}" cy="${peakY}" r="10" fill="${color}" opacity="0.2"/><circle cx="${peakX}" cy="${peakY}" r="4" fill="${color}"/><text x="${peakX}" y="${peakY-14}" text-anchor="middle" style="fill:${color}; font-weight:700; font-size:11px">${counts[peakIdx]}</text>` + labels;
-
-  const barSvg = document.getElementById('svg-bar');
-  let bars = '';
-  FY_KEYS.forEach((k,i) => {
-    const data = s.monthly[k]; const x = (i/11)*340 + 30;
-    if(data.a === 0) return;
-    const outP = 1 - (data.p/data.a);
-    bars += `<rect class="bar-dim" x="${x-10}" y="40" width="20" height="140"/><rect class="bar-glow" x="${x-10}" y="${40+outP*140}" width="20" height="${(1-outP)*140}" fill="${color}" opacity="0.7"/>`;
-    if(outP > 0.05) bars += `<text x="${x}" y="${40+outP*140-6}" text-anchor="middle" style="fill:var(--c-milestone); font-size:9px; font-weight:700">${Math.round(outP*100)}%</text>`;
+  [0,25,50,75,100].forEach(v => {
+    const y = pT + ph - (v/100)*ph;
+    yLabels += `<line x1="${pL}" x2="${W-pR}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+    if (v>0) yLabels += `<text class="ax" x="${pL-3}" y="${y+3}" text-anchor="end">${v}%</text>`;
   });
-  const bLabels = MONTH_NAMES.map((m,i) => `<text x="${(i/11)*340+30}" y="210" text-anchor="middle" class="axis-text">${m}</text>`).join('');
-  barSvg.innerHTML = grid + bars + bLabels;
+
+  FY_MONTHS.forEach((fm, i) => {
+    const k = `${fm.y}-${fm.m}`;
+    const raised = bt.monthAmt[k] || 0;
+    const paid   = bt.monthPaid[k] || 0;
+    const x = pL + i*gap + gap*0.2;
+    xLabels += `<text class="ax" x="${pL + i*gap + gap/2}" y="${H-6}" text-anchor="middle">${MONTH_NAMES[i]}</text>`;
+    if (raised === 0) return;
+    const paidPct = Math.min(paid/raised, 1);
+    const outPct  = 1 - paidPct;
+    const outH = outPct * ph;
+    const paidH = paidPct * ph;
+    bars += `<rect x="${x}" y="${pT}" width="${bw}" height="${outH}" fill="var(--rose-soft)" rx="2"/>`;
+    bars += `<rect x="${x}" y="${pT+outH}" width="${bw}" height="${paidH}" fill="${col}" opacity="0.65" rx="2"/>`;
+    if (outPct > 0.03) {
+      bars += `<text class="ax" x="${x+bw/2}" y="${pT+outH-3}" text-anchor="middle" fill="var(--rose)" style="font-size:8px;font-weight:600">${Math.round(outPct*100)}%</text>`;
+    }
+  });
+
+  document.getElementById('bar-chart').innerHTML = yLabels + bars + xLabels;
 }
 
-function getTabColor(t) {
-  return t === 'WORK' ? '#a8c5a0' : (t === 'PROFILED' ? '#7ea8b0' : '#c5a0a0');
-}
 
-function setSideTab(t, btn) {
-  state.sideTab = t;
-  document.querySelectorAll('.sidebar .pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active'); renderSidebar();
-}
-
-function setMainTab(t, btn) {
-  state.mainTab = t;
-  document.querySelectorAll('.chart-tab').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active'); renderCharts();
-}
 </script>
 </body>
 </html>
