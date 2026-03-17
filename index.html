@@ -49,7 +49,7 @@ body {
   background: var(--surface); padding: 60px; text-align: center; cursor: pointer;
   transition: all 0.3s ease;
 }
-.drop-zone:hover { border-color: var(--c-work); background: #161a20; }
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--c-work); background: #161a20; }
 .drop-icon { font-size: 48px; margin-bottom: 20px; opacity: 0.6; }
 
 /* ─── HEADER ─── */
@@ -151,7 +151,7 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 <body>
 
 <div id="upload-screen">
-  <div class="drop-zone" onclick="document.getElementById('file-input').click()">
+  <div class="drop-zone" id="drop-zone">
     <input type="file" id="file-input" style="display:none" accept=".xlsx,.xls">
     <div class="drop-icon">📊</div>
     <div style="font-size: 20px; font-weight: 500; margin-bottom: 8px;">Upload Finance Workbook</div>
@@ -264,18 +264,54 @@ let state = { data:[], depts:{}, summary:{ WORK:{}, PROFILED:{}, MILESTONE:{} },
 const MONTH_NAMES = ['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
 const FY_KEYS = ['2025-8','2025-9','2025-10','2025-11','2025-12','2026-1','2026-2','2026-3','2026-4','2026-5','2026-6','2026-7'];
 
-document.getElementById('file-input').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (evt) => {
-    const wb = XLSX.read(evt.target.result, { type: 'array', cellDates: true });
-    process(wb, file.name);
-  };
-  reader.readAsArrayBuffer(file);
+const dz = document.getElementById('drop-zone');
+const fi = document.getElementById('file-input');
+
+// Handle click
+dz.addEventListener('click', () => fi.click());
+
+// Handle drag and drop
+dz.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dz.classList.add('drag-over');
+});
+dz.addEventListener('dragleave', () => {
+  dz.classList.remove('drag-over');
+});
+dz.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    handleFile(e.dataTransfer.files[0]);
+  }
 });
 
+// Handle input change
+fi.addEventListener('change', (e) => {
+  if (e.target.files && e.target.files[0]) {
+    handleFile(e.target.files[0]);
+  }
+});
+
+function handleFile(file) {
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    try {
+      const wb = XLSX.read(evt.target.result, { type: 'array', cellDates: true });
+      process(wb, file.name);
+    } catch(err) {
+      console.error(err);
+      alert("Error parsing file. Please ensure it is a valid Excel workbook.");
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
 function process(wb, filename) {
+  // Clear old data
+  state.depts = {};
+  state.data = [];
+
   const dSheet = wb.Sheets['Depts'];
   if(dSheet) {
     XLSX.utils.sheet_to_json(dSheet).forEach(r => {
@@ -286,6 +322,12 @@ function process(wb, filename) {
   }
 
   const iSheet = wb.Sheets['All Invoices'];
+  if (!iSheet) {
+    alert("Workbook missing 'All Invoices' sheet.");
+    location.reload();
+    return;
+  }
+
   const raw = XLSX.utils.sheet_to_json(iSheet, { range: 1 });
   state.data = raw.map(r => ({
     date: new Date(r.Month || r['Invoice Date']),
@@ -296,6 +338,12 @@ function process(wb, filename) {
     funder: r['Paying Body'] || r.Funder,
     dept: String(r.Dept || r.Department || '').trim()
   })).filter(r => ['WORK','PROFILED','MILESTONE'].includes(r.type));
+
+  if (state.data.length === 0) {
+    alert("No valid invoice data found in 'All Invoices' sheet.");
+    location.reload();
+    return;
+  }
 
   aggregate();
   document.getElementById('upload-screen').style.display = 'none';
